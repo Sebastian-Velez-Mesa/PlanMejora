@@ -17,5 +17,10 @@ Thumbs.db
 # Environment
 *.env
 
+# TLS keystore (generated locally for development/deployment)
+*.p12
+*.pfx
+src/main/resources/keystore.p12
+
 # H2 Console
 /h2-console

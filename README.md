@@ -11,6 +11,15 @@ mvn spring-boot:run
 ```
 El sistema inicia en: `http://localhost:8080`
 
+### TLS y keystore local
+El servicio está configurado para correr con HTTPS en el puerto 8443 usando un keystore PKCS12. El archivo `src/main/resources/keystore.p12` no se versiona en el repositorio; debe generarse localmente antes de ejecutar la app:
+
+```bash
+keytool -genkeypair -alias nexuscore -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore src/main/resources/keystore.p12 -storepass changeit -validity 3650 -dname "CN=localhost, OU=Development, O=NexusCore, L=Local, ST=Local, C=CO"
+```
+
+Para despliegue, el keystore debe proporcionarse como secreto o archivo montado por la plataforma, por ejemplo mediante la variable de entorno `SSL_KEY_STORE` y `SSL_KEY_STORE_PASSWORD`.
+
 Consola H2 (base de datos): `http://localhost:8080/h2-console`
 - JDBC URL: `jdbc:h2:mem:nexuscoredb`
 - Usuario: `nexus_admin`
