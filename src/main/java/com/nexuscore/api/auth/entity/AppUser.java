@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.Audited;
 
 /**
  * ================================================================
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "usuarios_sistema")
+@Audited
 @Data
 @Builder
 @NoArgsConstructor

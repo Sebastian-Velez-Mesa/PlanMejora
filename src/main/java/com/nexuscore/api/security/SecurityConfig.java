@@ -70,6 +70,8 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
+            .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+
             .authorizeHttpRequests(auth -> {
                 // Rutas públicas: login y registro
                 auth.requestMatchers("/api/auth/**").permitAll();
@@ -108,7 +110,13 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
             // Necesario para la consola H2 en iframe (solo desarrollo)
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin())
+                .httpStrictTransportSecurity(hsts -> hsts
+                        .includeSubDomains(true)
+                        .preload(true)
+                        .maxAgeInSeconds(31536000))
+            );
 
         return http.build();
     }

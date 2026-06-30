@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -118,6 +122,13 @@ public class JwtUtils {
      * La clave mínima para HS512 es 512 bits (64 bytes).
      */
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        try {
+            byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+            MessageDigest digest = MessageDigest.getInstance("SHA-512");
+            byte[] derivedKey = Arrays.copyOf(digest.digest(keyBytes), 64);
+            return Keys.hmacShaKeyFor(derivedKey);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("No se pudo inicializar el algoritmo de firma JWT", e);
+        }
     }
 }

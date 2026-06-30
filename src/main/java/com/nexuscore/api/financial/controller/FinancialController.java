@@ -1,5 +1,6 @@
 package com.nexuscore.api.financial.controller;
 
+import com.nexuscore.api.audit.AuditLogService;
 import com.nexuscore.api.financial.entity.Transaction;
 import com.nexuscore.api.financial.service.FinancialService;
 import jakarta.validation.Valid;
@@ -39,6 +40,7 @@ import java.util.Map;
 public class FinancialController {
 
     private final FinancialService financialService;
+    private final AuditLogService auditLogService;
 
     /**
      * GET /api/financial/historial
@@ -100,6 +102,7 @@ public class FinancialController {
         }
 
         Transaction saved = financialService.registrarTransaccion(transaction, auth.getName());
+        auditLogService.record("financial", "create", auth.getName(), "Transacción registrada con ID " + saved.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 }

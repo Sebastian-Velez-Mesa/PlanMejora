@@ -1,5 +1,6 @@
 package com.nexuscore.api.customer.controller;
 
+import com.nexuscore.api.audit.AuditLogService;
 import com.nexuscore.api.customer.entity.Customer;
 import com.nexuscore.api.customer.repository.CustomerRepository;
 import jakarta.validation.Valid;
@@ -40,6 +41,7 @@ import java.util.Map;
 public class CustomerController {
 
     private final CustomerRepository customerRepository;
+    private final AuditLogService auditLogService;
 
     /**
      * GET /api/customers
@@ -105,6 +107,7 @@ public class CustomerController {
         }
 
         Customer saved = customerRepository.save(customer);
+        auditLogService.record("customer", "create", auth.getName(), "Cliente creado con ID " + saved.getId());
         log.info("[AUDITORÍA] Usuario '{}' registró nuevo cliente. ID asignado: {}.",
                 auth.getName(), saved.getId());
 
@@ -125,6 +128,7 @@ public class CustomerController {
             return ResponseEntity.notFound().build();
         }
         customerRepository.deleteById(id);
+        auditLogService.record("customer", "delete", auth.getName(), "Cliente eliminado con ID " + id);
         log.info("[AUDITORÍA] Usuario '{}' ELIMINÓ cliente ID: {}. Operación registrada.",
                 auth.getName(), id);
         return ResponseEntity.ok(Map.of("mensaje", "Cliente eliminado correctamente."));

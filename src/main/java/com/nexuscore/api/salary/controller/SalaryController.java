@@ -1,5 +1,6 @@
 package com.nexuscore.api.salary.controller;
 
+import com.nexuscore.api.audit.AuditLogService;
 import com.nexuscore.api.salary.entity.SalaryRecord;
 import com.nexuscore.api.salary.repository.SalaryRepository;
 import jakarta.validation.Valid;
@@ -43,6 +44,7 @@ import java.util.Map;
 public class SalaryController {
 
     private final SalaryRepository salaryRepository;
+    private final AuditLogService auditLogService;
 
     /**
      * GET /api/salaries
@@ -103,6 +105,7 @@ public class SalaryController {
         }
 
         SalaryRecord saved = salaryRepository.save(salaryRecord);
+        auditLogService.record("salary", "create", auth.getName(), "Registro de nómina creado para " + saved.getEmpleado());
         log.info("[AUDITORÍA] Usuario '{}' CREÓ registro de nómina. Empleado: '{}' | ID: {}.",
                 auth.getName(), saved.getEmpleado(), saved.getId());
 
