@@ -1,0 +1,63 @@
+# ============================================================
+# NexusCore ERP v1.0 - Configuración de Aplicación
+# Sistema Educativo - Matriz de Riesgos SENA ADSO
+# ============================================================
+
+server:
+  port: 8080
+  # [MITIGACIÓN APLICADA]: En producción usar HTTPS (puerto 443) con TLS 1.3.
+  # En este entorno educativo se usa HTTP para facilitar la demostración local.
+
+spring:
+  application:
+    name: NexusCore-ERP
+
+  # ============================================================
+  # BASE DE DATOS H2 EN MEMORIA (Solo entorno de desarrollo)
+  # [VULNERABILIDAD ORIGINAL]: Bases de datos sin cifrado en reposo.
+  # [MITIGACIÓN APLICADA]: En producción usar cifrado AES-256 y PostgreSQL
+  #                        con SSL habilitado (ssl=true en JDBC URL).
+  # ============================================================
+  datasource:
+    url: jdbc:h2:mem:nexuscoredb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: nexus_admin
+    password: Nexus$3cur3!2024
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:true}
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        format_sql: true
+
+# ============================================================
+# CONFIGURACIÓN JWT
+# [VULNERABILIDAD ORIGINAL]: Sesiones sin expiración y sin firma.
+# [MITIGACIÓN APLICADA]: Tokens firmados con HS512, expiración de 1 hora.
+# ============================================================
+nexuscore:
+  jwt:
+    secret: ${NEXUSCORE_JWT_SECRET:NexusCoreSecretKey2024!SuperSecure512BitsForHMACSHA512Algorithm}
+    expiration-ms: 3600000  # 1 hora en milisegundos
+
+# ============================================================
+# LOGGING FORMAL
+# [VULNERABILIDAD ORIGINAL]: Sin trazabilidad de eventos críticos.
+# [MITIGACIÓN APLICADA]: Logs estructurados con niveles INFO/WARN/ERROR.
+# ============================================================
+logging:
+  level:
+    com.nexuscore: INFO
+    org.springframework.security: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/nexuscore-audit.log
