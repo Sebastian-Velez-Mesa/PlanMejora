@@ -1,0 +1,21 @@
+﻿# Maven
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEA
+/.idea/
+*.iml
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment
+*.env
+
+# H2 Console
+/h2-console
